@@ -1,5 +1,6 @@
 import requests
 from bs4 import BeautifulSoup
+from app.utils import clean_text
 
 
 def scrape_website(url: str) -> str:
@@ -17,5 +18,6 @@ def scrape_website(url: str) -> str:
 
     # Extract text
     text = soup.get_text(separator=" ")
+    cleaned_text = clean_text(text)
 
-    return text
+    return cleaned_text
