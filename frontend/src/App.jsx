@@ -6,7 +6,7 @@ function App() {
   const [question, setQuestion] = useState("");
   const [messages, setMessages] = useState([]);
 
-  const API = "http://127.0.0.1:8000";
+  const API = "https://rag-chatbot-a0hq.onrender.com";
 
   const processUrl = async () => {
     await axios.post(`${API}/process?url=${url}`);
