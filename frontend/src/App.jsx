@@ -6,36 +6,80 @@ function App() {
   const [question, setQuestion] = useState("");
   const [messages, setMessages] = useState([]);
   const [darkMode, setDarkMode] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const chatEndRef = useRef(null);
 
   const API = "https://rag-chatbot-a0hq.onrender.com";
 
+  const isEmbedded = window.location.search.includes("site");
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const site = params.get("site");
+
+    if (site) {
+      setUrl(decodeURIComponent(site));
+    }
+  }, []);
+
+  useEffect(() => {
+    if (!url) return;
+
+    const process = async () => {
+      try {
+        setLoading(true);
+        await axios.post(`${API}/process?url=${url}`);
+        console.log("Auto processed:", url);
+      } catch (err) {
+        console.error("Processing failed:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (isEmbedded) {
+      process();
+    }
+  }, [url, isEmbedded]);
+
   const processUrl = async () => {
-    await axios.post(`${API}/process?url=${url}`);
-    alert("Website processed!");
+    if (!url) return;
+
+    try {
+      setLoading(true);
+      await axios.post(`${API}/process?url=${url}`);
+      alert("Website processed!");
+    } catch (err) {
+      console.error(err);
+      alert("Processing failed");
+    } finally {
+      setLoading(false);
+    }
   };
 
   const askQuestion = async () => {
     if (!question.trim()) return;
 
-    const res = await axios.get(`${API}/ask?query=${question}`);
+    try {
+      const res = await axios.get(`${API}/ask?query=${question}`);
 
-    setMessages([
-      ...messages,
-      { type: "user", text: question },
-      { type: "bot", text: res.data.answer },
-    ]);
+      setMessages((prev) => [
+        ...prev,
+        { type: "user", text: question },
+        { type: "bot", text: res.data.answer },
+      ]);
 
-    setQuestion("");
+      setQuestion("");
+    } catch (err) {
+      console.error(err);
+    }
   };
 
-  // ✅ Auto-scroll
   useEffect(() => {
     chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
-  // ✅ Enter key handler
   const handleKeyDown = (e) => {
     if (e.key === "Enter") {
       askQuestion();
@@ -47,7 +91,7 @@ function App() {
       className={`min-h-screen flex items-center justify-center p-4 transition ${
         darkMode
           ? "bg-gray-900 text-white"
-          : "bg-gradient-to-br from-gray-100 to-gray-200"
+          : "bg-linear-to-br from-gray-100 to-gray-200"
       }`}
     >
       <div
@@ -66,26 +110,27 @@ function App() {
           </button>
         </div>
 
-        {/* URL Input */}
-        <div className="mb-6">
-          <input
-            type="text"
-            placeholder="https://example.com"
-            className={`mt-1 p-3 border rounded-lg w-full focus:outline-none ${
-              darkMode
-                ? "bg-gray-700 border-gray-600"
-                : "focus:ring-2 focus:ring-blue-400"
-            }`}
-            value={url}
-            onChange={(e) => setUrl(e.target.value)}
-          />
-          <button
-            onClick={processUrl}
-            className="mt-3 w-full px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition"
-          >
-            Process Website
-          </button>
-        </div>
+        {!isEmbedded && (
+          <div className="mb-6">
+            <input
+              type="text"
+              placeholder="https://example.com"
+              className={`mt-1 p-3 border rounded-lg w-full focus:outline-none ${
+                darkMode
+                  ? "bg-gray-700 border-gray-600"
+                  : "focus:ring-2 focus:ring-blue-400"
+              }`}
+              value={url}
+              onChange={(e) => setUrl(e.target.value)}
+            />
+            <button
+              onClick={processUrl}
+              className="mt-3 w-full px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition"
+            >
+              {loading ? "Processing..." : "Process Website"}
+            </button>
+          </div>
+        )}
 
         {/* Chat */}
         <div
@@ -93,7 +138,13 @@ function App() {
             darkMode ? "bg-gray-700 border-gray-600" : "bg-gray-50"
           }`}
         >
-          {messages.length === 0 && (
+          {loading && (
+            <p className="text-center text-gray-400 mb-2">
+              Processing website...
+            </p>
+          )}
+
+          {messages.length === 0 && !loading && (
             <p className="text-gray-400 text-center">
               Ask something about the website...
             </p>
@@ -120,7 +171,6 @@ function App() {
             </div>
           ))}
 
-          {/* ✅ Auto-scroll anchor */}
           <div ref={chatEndRef} />
         </div>
 
@@ -136,7 +186,7 @@ function App() {
             }`}
             value={question}
             onChange={(e) => setQuestion(e.target.value)}
-            onKeyDown={handleKeyDown} // ✅ Enter works now
+            onKeyDown={handleKeyDown}
           />
           <button
             onClick={askQuestion}
