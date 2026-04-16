@@ -3,7 +3,7 @@
 
   const iframe = document.createElement("iframe");
 
-  iframe.src = `https://rag-chatbot-mocha-eight.vercel.app/`;
+  iframe.src = `https://rag-chatbot-mocha-eight.vercel.app/?site=${currentSite}`;
 
   iframe.style.position = "fixed";
   iframe.style.bottom = "20px";
