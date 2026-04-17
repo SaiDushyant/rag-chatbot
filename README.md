@@ -1,110 +1,153 @@
-# 🚀 RAG-Powered Website Chatbot with Embeddable Widget
+# 🚀 RAG-Powered Website Chatbot
 
-## 📌 Overview
+## 📌 Project Description
 
-This project is a **production-ready RAG (Retrieval-Augmented Generation) chatbot** that transforms any website into an intelligent, queryable assistant.
+This project is a **Retrieval-Augmented Generation (RAG) based chatbot** that allows users to interact with the content of any website.
 
-Users can:
+The system takes a website URL, extracts and processes its content, and enables users to ask questions. It provides answers based strictly on the website’s information using semantic search and a language model.
 
-* Enter a website URL
-* Process its content into a knowledge base
-* Ask natural language questions
-* Receive accurate, context-aware answers
-
-The system also supports a **plug-and-play embeddable chatbot widget**, allowing integration into any website using a single script tag.
+🔗 **Live Demo:** https://rag-chatbot-mocha-eight.vercel.app/
 
 ---
 
-## ✨ Key Features
+## 📸 Demo
 
-* 🌐 Convert any website into a chatbot
-* 🧠 Context-aware question answering using RAG
-* ⚡ Fast AI responses powered by Groq
-* 📦 Efficient semantic search using FAISS
-* 💬 Clean and interactive chat interface
-* 🧩 Embeddable chatbot for external websites
+### 🔹 Standalone Chatbot (Manual URL Input)
+
+Users can input any website URL and interact with it.
+
+![Standalone Chatbot](./assets/standalone-chatbot.png)
 
 ---
 
-## 🏗️ Tech Stack
+### 🔹 Embedded Chatbot (Automatic Website Context)
+
+The chatbot can be embedded into any website and automatically works on that site.
+
+![Embedded Chatbot](./assets/embedded-chatbot.png)
+
+---
+
+## ⚙️ Setup and Usage Instructions
+
+### 1. Clone the Repository
+
+```bash id="t7dz1v"
+git clone https://github.com/your-username/your-repo-name.git
+cd your-repo-name
+```
+
+---
+
+### 2. Backend Setup
+
+```bash id="3jxgqj"
+cd backend
+python -m venv venv
+source venv/bin/activate   # Mac/Linux
+venv\Scripts\activate      # Windows
+
+pip install -r requirements.txt
+```
+
+Create a `.env` file:
+
+```id="x6clb2"
+GROQ_API_KEY=your_key
+GEMINI_API_KEY=your_key
+```
+
+Run the backend:
+
+```bash id="ehowc0"
+uvicorn app.main:app --reload
+```
+
+---
+
+### 3. Frontend Setup
+
+```bash id="cdygfi"
+cd frontend
+npm install
+npm run dev
+```
+
+---
+
+### 4. Usage
+
+1. Open the frontend
+2. Enter a website URL
+3. Click **Process Website**
+4. Ask questions about the website
+
+---
+
+## 📦 Dependencies and Prerequisites
 
 ### Backend
 
+* Python 3.8+
 * FastAPI
-* BeautifulSoup + Requests (Web scraping)
-* FAISS (Vector search)
-* Groq API (`llama-3.1-8b-instant`)
-* Gemini API (for embeddings)
+* BeautifulSoup4
+* Requests
+* FAISS
+* Google Gemini API (Embeddings)
+* Groq API (LLM)
 
 ### Frontend
 
+* Node.js
 * React (Vite)
 * Tailwind CSS
 
-### Deployment
+---
 
-* Backend: Render
-* Frontend: Vercel
+## 🧠 Solution Approach
+
+The solution follows a **Retrieval-Augmented Generation (RAG)** pipeline:
+
+1. **Data Extraction**
+
+   * Scrapes website content using BeautifulSoup
+
+2. **Preprocessing**
+
+   * Cleans and splits text into chunks
+
+3. **Vectorization**
+
+   * Converts text into embeddings using Gemini API
+
+4. **Storage**
+
+   * Stores embeddings in FAISS for fast similarity search
+
+5. **Query Processing**
+
+   * Converts user query into embedding
+
+6. **Retrieval + Generation**
+
+   * Retrieves relevant chunks and generates answers using Groq
 
 ---
 
-## ⚙️ How It Works
+## 🏗️ System Architecture
 
-### 1. Website Processing Pipeline
-
-```
-URL → Scrape → Clean → Chunk → Vectorize → Store in FAISS
-```
-
-* Extracts visible content from the website
-* Cleans and normalizes text
-* Splits into smaller chunks
-* Converts into vector representations
-* Stores in FAISS for fast retrieval
-
----
-
-### 2. Question Answering (RAG Flow)
-
-```
-User Query → Vectorize → Retrieve Relevant Chunks → Generate Answer
-```
-
-* User question is converted into a vector
-* Relevant content is retrieved from FAISS
-* Context is passed to the LLM
-* Final answer is generated using Groq
-
----
-
-## 🔄 System Architecture
-
-```
-Frontend (React UI)
+```id="g2kpwr"
+Frontend (React)
         ↓
 FastAPI Backend
         ↓
-Scraper → Text Processing → Vector Store (FAISS)
+Scraper → Cleaner → Chunker → Embeddings (Gemini)
+        ↓
+FAISS Vector Store
         ↓
 Retriever → Prompt Builder → Groq LLM
         ↓
-Response + Context
-```
-
----
-
-## 🔌 API Endpoints
-
-### Process Website
-
-```
-POST /process?url=...
-```
-
-### Ask Question
-
-```
-GET /ask?query=...
+Response to User
 ```
 
 ---
@@ -113,100 +156,63 @@ GET /ask?query=...
 
 You can integrate the chatbot into any website using:
 
-```html
+```html id="k9m2qp"
+<script src="https://rag-chatbot-mocha-eight.vercel.app/embed.js"></script>
+```
+
+### How it works:## 🧩 Embeddable Chatbot
+
+You can integrate the chatbot into any website using:
+
+```html id="ql1lxt"
+<script src="https://rag-chatbot-mocha-eight.vercel.app/embed.js"></script>
+```
+
+### How it works:
+
+* Injects a floating chatbot UI
+* Connects to your backend
+* Automatically interacts with the website content
+
+
+* Injects a floating chatbot UI
+* Connects to the backend API
+* Automatically detects and processes the host website
+
+### 🔧 Self-hosted / Custom domain
+
+If you have self-deployed the project, you can use your own domain instead of the default one:
+
+```html id="v3n8td"
 <script src="https://your-domain.com/embed.js"></script>
 ```
 
-This injects a floating chatbot widget that connects to your backend.
+Just replace `your-domain.com` with your deployed frontend domain where `embed.js` is hosted.
 
 ---
 
-## 🚀 Getting Started
+## 🚀 Key Features
 
-### Backend
-
-```bash
-cd backend
-pip install -r requirements.txt
-uvicorn app.main:app --reload
-```
-
-### Frontend
-
-```bash
-cd frontend
-npm install
-npm run dev
-```
-
----
-
-## 🔐 Environment Variables
-
-Create a `.env` file:
-
-```
-GROQ_API_KEY=your_key
-GEMINI_API_KEY=your_key
-```
-
----
-
-## 📸 Demo Flow
-
-1. Enter a website URL
-2. Process the website
-3. Ask questions
-4. Get contextual answers
-5. Embed chatbot into any website
-
----
-
-## 📸 Demo
-
-### 🔹 Standalone Chatbot (Manual URL Input)
-
-This mode allows users to input any website URL and interact with it through the chatbot.
-
-* User provides a URL
-* System processes the website
-* Questions can be asked interactively
-
-![Standalone Chatbot](./assets/standalone-chatbot.png)
-
----
-
-### 🔹 Embedded Chatbot (Automatic Website Context)
-
-In this mode, the chatbot is embedded directly into a website using a script.
-
-* No manual URL input required
-* Automatically processes the current website
-* Acts as an on-site AI assistant
-
-![Embedded Chatbot](./assets/embedded-chatbot.png)
-
----
-
-### 💡 Key Difference
-
-| Mode       | Input Required | Use Case                                   |
-| ---------- | -------------- | ------------------------------------------ |
-| Standalone | Manual URL     | Analyze any website                        |
-| Embedded   | Automatic      | Enhance your own website with AI assistant |
+* Convert any website into a chatbot
+* Context-aware question answering
+* Fast responses using Groq
+* Efficient vector search using FAISS
+* Clean chat UI
+* Embeddable chatbot widget
 
 ---
 
 ## 🏁 Conclusion
 
-This project demonstrates a **real-world AI system** that combines:
+This project demonstrates how to build a **real-world AI system** using RAG by combining:
 
-* Retrieval (FAISS)
-* Language understanding (LLM)
-* Web data processing
+* Web scraping
+* Semantic search
+* Vector databases
+* Language models
 * Full-stack integration
 
-It showcases how modern AI applications can be built efficiently using free tools while maintaining production-level architecture.
+It showcases a scalable approach to building intelligent assistants grounded in real data.
 
 ---
 
