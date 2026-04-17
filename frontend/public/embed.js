@@ -6,12 +6,15 @@
   container.style.bottom = "20px";
   container.style.right = "20px";
   container.style.zIndex = "9999";
+  container.style.display = "flex";
+  container.style.flexDirection = "column";
+  container.style.alignItems = "flex-end";
 
   const iframe = document.createElement("iframe");
   iframe.src = `https://rag-chatbot-mocha-eight.vercel.app/?site=${currentSite}`;
 
   iframe.style.width = "380px";
-  iframe.style.height = "520px";
+  iframe.style.height = "550px";
   iframe.style.border = "none";
   iframe.style.borderRadius = "12px";
   iframe.style.boxShadow = "0 4px 20px rgba(0,0,0,0.2)";
